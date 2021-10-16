@@ -15,14 +15,12 @@ export default function Profile() {
     
    let url ='https://hajiri.co/uploads/no_image.jpg';
     if(foto != null){
-        if( foto.includes('null') == false){
-           url =  foto ;
-        }
-        else{
-            url = 'https://hajiri.co/uploads/no_image.jpg'
-        }
+        url =  foto ;
     }
-
+    else{
+        url = 'https://hajiri.co/uploads/no_image.jpg'
+    }
+    
     return (
         <ProfileContainer>
             { skeleton && <Skeleton />}

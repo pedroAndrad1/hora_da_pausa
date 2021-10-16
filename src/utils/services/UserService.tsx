@@ -32,15 +32,15 @@ const create = async (user: User) => {
 }
 
 //Loga um usuario
-const login = async (email: string, password: string) => {
+const login = async (email: string, senha: string) => {
     
-    return await fetch(`${API_URL}/api/login`,
+    return await fetch(`${API_URL}/usuario/login`,
     {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({email, password})
+        body: JSON.stringify({email, senha})
     })
 }
 
@@ -103,8 +103,8 @@ const userLevelUp = async (id_user) => {
 }
 
 const refreshUser = async () =>{
-    return await fetch(`${API_URL}/api/me`,{
-        method: 'POST',
+    return await fetch(`${API_URL}/usuario/by/token`,{
+        method: 'GET',
         headers:{
             'Content-Type': 'application/json',
             'Authorization': 'Bearer ' + Cookies.get('access_token')

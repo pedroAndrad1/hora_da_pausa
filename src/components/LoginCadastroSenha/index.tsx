@@ -71,24 +71,24 @@ export default function LoginCadastroSenha({ type, token_reset_senha }: LoginCad
     const handleLogin = () => {
         UserService.login(email, senha)
             .then(async res => {
+                const json = await res.json();
+                console.log(json);
                 if (res.ok) {
-                    const json = await res.json();
                     Cookie.remove('access_token');
-                    Cookie.set('access_token', json.access_token, { expires: new Date('9999-01-01') });
+                    Cookie.set('access_token', json.token, { expires: new Date('9999-01-01') });
                     setUserInfos(
-                        json.user.id,
-                        json.user.nome,
-                        json.user.email,
-                        json.user.url_img,
-                        json.user.nivel,
-                        0,
-                        json.user.exp,
-                        json.user.exp_cap,
-                        json.user.contribuidor
+                        json.usuario.id,
+                        json.usuario.nome,
+                        json.usuario.email,
+                        json.usuario.foto,
+                        json.usuario.nivel,
+                        json.usuario.quant_exercicios_feitos,
+                        json.usuario.xp,
+                        json.usuario.xp_para_subir_de_nivel,
+                        json.usuario.doador
                     )
-                    console.log(json);
                 }
-                handleRes(res, 'email ou senha incorretos!', null, '/');
+                handleRes(res, json.message, null, '/');
             })
             .catch(err => handleError(err))
             .finally(() => setLoading(false));

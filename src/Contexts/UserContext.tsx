@@ -14,14 +14,14 @@ interface UserContextData {
     (id: number,
         nome: string,
         email: string,
-        foto: string,
+        foto: any,
         level: number,
         rotinasFeitas: number,
         xp: number,
         xpParaUpar: number,
         contribuidor: boolean) => void;
     setUserNome: (nome: string) => void;
-    setUserFoto: (foto: string) => void;
+    setUserFoto: (foto: any) => void;
     setUserLevel: (level: number) => void;
     setUserRotinasFeitas: (rotinasFeitas: number) => void;
     setUserXp: (xp: number) => void;
@@ -66,18 +66,19 @@ export const UserContextProvider = ({ children }: UserContextProps) => {
 
     const setUserInfos =
         (id: number,
-            name: string,
-            email: string,
-            foto: string,
-            level: number, 
-            rotinasFeitas:number, 
-            xp: number,
-            xpParaUpar: number,
-            contribuidor: boolean) => {
+        name: string,
+        email: string,
+        foto: any,
+        level: number, 
+        rotinasFeitas:number, 
+        xp: number,
+        xpParaUpar: number,
+        contribuidor: boolean) => {
+
             setUserId(id);
             setName(name);
             setEmail(email);
-            setFoto(`${API_URL}/${foto}`);
+            setUserFoto(foto);
             setLevel(level);
             setXp(xp);
             setXpParaUpar(xpParaUpar);
@@ -88,8 +89,14 @@ export const UserContextProvider = ({ children }: UserContextProps) => {
     const setUserNome = (name: string) => {
         setName(name);
     }
-    const setUserFoto = (foto: string) => {
-        if(foto !== null) setFoto(`${API_URL}/${foto}`);
+    const setUserFoto = (foto: any) => {
+        if(foto !== null){
+            //E necessario converter o Buffer que vem da API 
+            const {data} = foto;
+            const img =  btoa(String.fromCharCode.apply(null, data));
+            console.log(img);
+            setFoto("data:image/png;base64," + img);
+        }
     }
     const setUserLevel = (level: number) => {
         setLevel(level);
@@ -122,12 +129,12 @@ export const UserContextProvider = ({ children }: UserContextProps) => {
                     res.id,
                     res.nome,
                     res.email,
-                    res.url_img,
+                    res.foto,
                     res.nivel,
-                    res.rotinas,
-                    res.exp,
-                    res.exp_cap,
-                    res.contribuiu
+                    res.quant_exercicios_feitos,
+                    res.xp,
+                    res.xp_para_subir_de_nivel,
+                    res.doador
                 )
                 setLogado(true);
             })
