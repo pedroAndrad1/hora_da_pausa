@@ -2,9 +2,9 @@
 
 export class User{
     id?:number;
-    name:string;
+    nome:string;
     email:string;
-    password?:string;
+    senha?:string;
     foto?: string;
     level?: number;
     rotinasFeitas?: number;
@@ -14,9 +14,9 @@ export class User{
 
 
     constructor(
-        name?:string, 
+        nome?:string, 
         email?:string, 
-        password?:string,  
+        senha?:string,  
         id?:number,
         foto?: string,
         level?: number,
@@ -25,9 +25,9 @@ export class User{
         xpParaUpar?:number,
         contribuidor?: boolean)
     {
-        this.name= name;
+        this.nome= nome;
         this.email = email;
-        if(password) this.password = password;
+        if(senha) this.senha = senha;
         if(foto) this.foto = foto;
         if(level) this.level = level;
         if(rotinasFeitas) this.rotinasFeitas = rotinasFeitas;

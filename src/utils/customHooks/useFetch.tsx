@@ -27,7 +27,7 @@ export function useFetch() {
     }
 
     const handleError = (err: any) =>
-        Toast.error('Estamos enfrentando problemas no servidor. Por favor, tente novamente mais tarde!')
+        Toast.error(err)
 
 
     return{

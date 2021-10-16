@@ -2,10 +2,7 @@ import Cookies from "js-cookie";
 import { User } from "../../models/User.model";
 
 //Faz as operacoes com o banco para usuarios
-
-
 const API_URL = process.env.NEXT_PUBLIC_API;
-const access_token = Cookies.get('access_token');
 
 const handleRes = async (res: Response, error_message: string) => {
     //console.log(res);
@@ -21,7 +18,7 @@ const handleRes = async (res: Response, error_message: string) => {
 //Cadastra um usuario
 const create = async (user: User) => {
     
-    let request = await fetch(`${API_URL}/api/cadastro`,
+    let request = await fetch(`${API_URL}/usuario/create`,
     {
         method: 'POST',
         headers: {

@@ -35,40 +35,41 @@ export default function LoginCadastroSenha({ type, token_reset_senha }: LoginCad
     const { handleError, handleRes } = useFetch();
     const { setUserInfos } = useContext(UserContext);
     const router = useRouter();
-    const [name, setName] = useState(null);
+    const [nome, setNome] = useState(null);
     const [email, setEmail] = useState(null);
-    const [password, setPassword] = useState('');
-    const [passwordError, setPasswordError] = useState(false);
+    const [senha, setSenha] = useState('');
+    const [passwordError, setSenhaError] = useState(false);
     const [isFormCadastroOk, setIsFormCadastroOk] = useState(false);
     const [loading, setLoading] = useState(false);
 
     const emailPlaceholder = (type == 'cadastro' || type == 'login') ?
         'exemplo@dominio.com' : 'Enviaremos um email para definir sua nova senha'
 
-    //Alem de salvar o state do password, checa a cada 3 segundos se ele e valido
+    //Alem de salvar o state do senha, checa a cada 3 segundos se ele e valido
     const handlePasswordChange = (e) => {
-        setPassword(e.target.value);
+        setSenha(e.target.value);
 
         if (type == 'cadastro' || type == 'nova-senha') {
-            setPasswordError(!isPasswordValid(password))
+            setSenhaError(!isPasswordValid(senha))
             console.log(isFormCadastroOk)
             setIsFormCadastroOk(!passwordError)
         }
     }
 
     const handleCadastro = () => {
-        const user = new User(name, email, password);
+        const user = new User(nome, email, senha);
 
         UserService.create(user)
-            .then(res => {
-                handleRes(res, 'email já cadastrado!', 'email cadastrado com sucesso!', '/login');
+            .then(async res => {
+                const response = await res.json()     
+                handleRes(res, response.message, 'email cadastrado com sucesso!', '/login');
             })
             .catch(err => handleError(err))
             .finally(() => setLoading(false));
     }
 
     const handleLogin = () => {
-        UserService.login(email, password)
+        UserService.login(email, senha)
             .then(async res => {
                 if (res.ok) {
                     const json = await res.json();
@@ -105,7 +106,7 @@ export default function LoginCadastroSenha({ type, token_reset_senha }: LoginCad
     }
     const handleNovaSenha = () => {
 
-        UserService.resetPassword(token_reset_senha, password)
+        UserService.resetPassword(token_reset_senha, senha)
             .then(res => {
                 handleRes
                     (res, 'Ocorreu um erro ao redefinir a senha, por favor tente mais tarde!',
@@ -140,8 +141,8 @@ export default function LoginCadastroSenha({ type, token_reset_senha }: LoginCad
     const handleLoginFacebook = (res) => {
         setLoading(true);
         console.log(res);
-        console.log(res.email, res.id, res.name);
-        UserService.loginFacebook(res.email, res.id, res.name)
+        console.log(res.email, res.id, res.nome);
+        UserService.loginFacebook(res.email, res.id, res.nome)
         .then(async res =>{
             if(res.ok){
                 const json = await res.json();
@@ -220,10 +221,10 @@ export default function LoginCadastroSenha({ type, token_reset_senha }: LoginCad
                                     {
                                         type == 'cadastro' &&
                                         <>
-                                            <label htmlFor="name">Nome:</label>
-                                            <Input name='name'
+                                            <label htmlFor="nome">Nome:</label>
+                                            <Input name='nome'
                                                 onChange={
-                                                    ({ target }) => setName(target.value)
+                                                    ({ target }) => setNome(target.value)
                                                 } />
                                         </>
                                     }
@@ -242,8 +243,8 @@ export default function LoginCadastroSenha({ type, token_reset_senha }: LoginCad
 
                                         type !== 'recuperar-senha' &&
                                         <>
-                                            <label htmlFor="password">Senha:</label>
-                                            <Input type='password' name='password' minLength={8}
+                                            <label htmlFor="senha">Senha:</label>
+                                            <Input type='password' name='senha' minLength={8}
                                                 onChange={handlePasswordChange}
                                             />
                                         </>
@@ -299,7 +300,7 @@ export default function LoginCadastroSenha({ type, token_reset_senha }: LoginCad
                             <FacebookLogin
                                 appId='2938031616429769'
                                 callback={handleLoginFacebook}
-                                fields="name,email,picture"
+                                fields="nome,email,picture"
                                 render={renderProps => (
                                     <LoginFacebookButton onClick={renderProps.onClick}>
                                         Login com o Facebook
