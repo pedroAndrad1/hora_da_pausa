@@ -16,8 +16,9 @@ interface CountdownContextData {
     minutes: number;
     seconds: number;
     startCountdown: () => void;
-    resetCountdown: (type: string) => void;
+    resetCountdown: () => void;
     updateTimer: (newInitialTime:number) => void;
+    initialTime: number;
 }
 
 
@@ -28,8 +29,7 @@ export function CountdownContextProvider({ children }: CountdownProviderProps) {
     // Para eu controlar o timeout
     let countdownTimeout: NodeJS.Timeout;
 
-    const {rotinaId, setRotina_Id, resetChallenge } = useContext(ChallengesContext);
-    const {userId, xp, xpParaUpar} = useContext(UserContext);
+    const {resetChallenge} = useContext(ChallengesContext);
 
     //Para armazenar qual deve ser o valor a retoranr com o resetCountdown
     //Vezes 60 pq são 30 minutos e não segundos
@@ -55,6 +55,7 @@ export function CountdownContextProvider({ children }: CountdownProviderProps) {
 
         if (isActive && time > 0) {
             countdownTimeout = setTimeout(() => setTime(time - 1), 1000);
+            console.log(initialTime);
         }
         else if (isActive && time == 0) {
             setHasFinished(true);
@@ -77,16 +78,10 @@ export function CountdownContextProvider({ children }: CountdownProviderProps) {
 
     const startCountdown = () => {
         setIsActive(true);
-        ChallengeService.iniciarRotina(userId)
-        .then(res =>{
-            console.log(res);
-            setRotina_Id(res.id_rotina);
-        })
-        .catch(err => Toast.error(err))
     }
 
    
-    const resetCountdown = (type: string) => {
+    const resetCountdown = () => {
 
         setIsActive(false);
         //Limpando as execucoes pendentes do timeout, para de vez o timeout
@@ -95,10 +90,6 @@ export function CountdownContextProvider({ children }: CountdownProviderProps) {
         setTime(initialTime);
         //Resetando o botao
         setHasFinished(false);
-        //Cancelando a rotina
-        if(type == 'give_up'){
-            ChallengeService.cancelarChallenge_Rotina(rotinaId);
-        }
         resetChallenge();
     }
 
@@ -117,7 +108,8 @@ export function CountdownContextProvider({ children }: CountdownProviderProps) {
             seconds,
             startCountdown, 
             resetCountdown,
-            updateTimer
+            updateTimer,
+            initialTime
         }}>
             {children}
         </CountdownContext.Provider>

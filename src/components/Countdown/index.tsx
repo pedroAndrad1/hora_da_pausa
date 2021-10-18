@@ -7,7 +7,6 @@ import { CountdownButtonStart, CountdownContainer, CountdownButtonGiveUp } from 
 export default function Countdown() {
 
     const {
-        time,
         minutes,
         seconds,
         hasFinished,
@@ -38,17 +37,17 @@ export default function Countdown() {
 
                 hasFinished ?
                     <CountdownButtonGiveUp disabled >
-                        Rotina terminada
+                        Ciclo terminado
                     </CountdownButtonGiveUp>
                     :
                     isActive ?
                         <CountdownButtonGiveUp onClick={resetCountdown}>
-                            Abandonar rotina
+                            Abandonar ciclo
                         <img src='icons/close.svg' alt='x' />
                         </CountdownButtonGiveUp>
                         :
                         <CountdownButtonStart onClick={startCountdown}>
-                            Iniciar rotina
+                            Iniciar ciclo
                     </CountdownButtonStart>
             }
         </>

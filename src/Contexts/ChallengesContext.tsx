@@ -24,48 +24,25 @@ interface ChallengesContextData {
     activeChallenge: Challenge;
     startNewChallenge: (type: string) => void;
     resetChallenge: () => void;
-    completeChallenge: () => void;
+    completeChallenge: (countdownTime: number) => void;
     closeLevelUpModal: () => void;
-    setRotina_Id: (id: number) => void;
-    rotinaId: number;
     loadingChallenge: boolean;
 }
 
 
 export function ChallengesProvider({ children, ...rest }: ChallengesProviderProps) {
-
-    //?? para caso nao tenha, coloque aquele valor
-    const [rotinaId, setRotinaId] = useState(null);
-    const [activeChallenge, setActiveChallenge] = useState(null);
+    // ?? = para caso nao tenha, coloque aquele valor
+    const [activeChallenge, setActiveChallenge] = useState<Challenge>(null);
     const [isLevelUpModalActive, setIsLevelUpModalActive] = useState(false);
     const [loadingChallenge, setLoadingChallenge] = useState(false);
-    //const experienceToNextLevel = Math.pow( (level + 1) * 4 , 2)
-    const {userId, xp, xpParaUpar, setUserXp, rotinasFeitas, setUserRotinasFeitas, refreshUser} = useContext(UserContext);
+    const {userId, refreshUser} = useContext(UserContext);
     const {resetCountdown} = useContext(CountdownContext);
     //Pedindo permissao para fazer notificacoes assim que carrega a app ao carregar a app
     useEffect(() => {
         Notification.requestPermission();
     }, [])
 
-    //Salva o level, currentExperience, challengesCompleted em um cookie para fazer a persistencia
-    //dos dados, sempre que um desses states mudarem. 
-    //Essa vai ser uma forma provisoria e no futuro vou buscar um back-end para tal.
-    //useEffect(() => {
-        //Cookies.set('level', String(level), {expires: new Date('9999-01-01')} );
-        //Cookies.set('currentExperience', String(currentExperience), {expires: new Date('9999-01-01')} );
-        //Cookies.set('challengesCompleted', String(challengesCompleted), {expires: new Date('9999-01-01')} );
-    //}, [])
-
-    const setRotina_Id = id => {
-        setRotinaId(Number(id));
-    }
-
-    const levelUp = () => {
-        //UserService.userLevelUp(userId)
-        refreshUser();
-        setIsLevelUpModalActive(true)
-       
-    }
+  
 
     const closeLevelUpModal = () => {
         setIsLevelUpModalActive(false);
@@ -75,9 +52,10 @@ export function ChallengesProvider({ children, ...rest }: ChallengesProviderProp
         setLoadingChallenge(true);
         ChallengeService.getChallenge(type)
             .then(res => {
+                console.log(res[0]);
                 setActiveChallenge(
-                    new Challenge(res.exercicio.type, res.exercicio.description, res.exercicio.amount,
-                        res.exercicio.id)
+                    new Challenge(res[0].tipo_exercicio, res[0].descricao, res[0].xp,
+                        res[0].id)
                 )
 
             })
@@ -89,27 +67,16 @@ export function ChallengesProvider({ children, ...rest }: ChallengesProviderProp
 
     const resetChallenge = () => {
         setActiveChallenge(null);
-        //ChallengeService.cancelarChallenge_Rotina(rotinaId,user.id)
     }
 
-    const completeChallenge = () => {
-        const { amount } = activeChallenge;
+    const completeChallenge = (countdownTime: number) => {
+        console.log("tempo!", countdownTime)
+        ChallengeService.confirmaChallenge(userId, activeChallenge.id , countdownTime)
+        .then( async res => {
+            if(res.levelUp) setIsLevelUpModalActive(true)
 
-        ChallengeService.confirmaChallenge(rotinaId, userId, amount)
-        .then( res=>{
-            console.log(res);
-            let finalExperience = xp + amount;
-     
-             //Se a experiencia final depois do challenge foi maior que a experiencia para o proximo
-             //nivel. A experiencia final deve ser diminuida da experiencia pra upar e deve-se upar
-             if(finalExperience >= xpParaUpar){
-                 finalExperience = finalExperience - xpParaUpar;
-                 levelUp();
-             }
-                   
-             setUserRotinasFeitas(rotinasFeitas + 1);
-             setUserXp(finalExperience);
-             setActiveChallenge(null);
+            refreshUser();
+            setActiveChallenge(null);
         })
         .catch(err => Toast.error(err));
 
@@ -124,9 +91,7 @@ export function ChallengesProvider({ children, ...rest }: ChallengesProviderProp
                 resetChallenge,
                 completeChallenge,
                 closeLevelUpModal,
-                setRotina_Id,
-                rotinaId,
-                loadingChallenge
+                loadingChallenge,
             }
         }>
             {children}

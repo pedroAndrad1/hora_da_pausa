@@ -13,7 +13,7 @@ export default function ChallengeBox() {
 
     const { activeChallenge, resetChallenge, completeChallenge, startNewChallenge, loadingChallenge}
      = useContext(ChallengesContext);
-    const { resetCountdown, hasFinished } = useContext(CountdownContext);
+    const { resetCountdown, hasFinished, initialTime } = useContext(CountdownContext);
     const [choosingChallengeType, setChoosingChallengeType] = useState(false);
 
     //Sempre que o hasFinished mudar de false para true, quer dizer que o timer zerou e devo ir para a
@@ -23,13 +23,13 @@ export default function ChallengeBox() {
     }, [hasFinished])
 
     const handleSucceed = () => {
-        completeChallenge();
-        resetCountdown('');
+        completeChallenge(initialTime);
+        resetCountdown();
     }
     const handleFailed = () => {
         //Coloquei essa funcao no resetCountdown pra cancelar a rotina so uma vez
         //resetChallenge();
-        resetCountdown('give_up');
+        resetCountdown();
     }
 
     const handleChooseType = (event) => {
@@ -63,16 +63,16 @@ export default function ChallengeBox() {
                 <ChooseChallengeTypeContainer>
                     <header>Escolha um tipo de exercício como desafio dessa rotina!</header>
                     <main>
-                        <EyeChallenge onClick={handleChooseType} value='eye'>
+                        <EyeChallenge onClick={handleChooseType} value='olhos'>
                             Exercício para Olhos
                          </EyeChallenge>
-                        <BodyChallenge onClick={handleChooseType} value='body'>
+                        <BodyChallenge onClick={handleChooseType} value='corpo'>
                             Exercício para Corpo
                     </BodyChallenge>
                     </main>
                     <footer>
                         <FailedButton>
-                            Sair da rotina
+                            Sair do ciclo
                         </FailedButton>
                     </footer>
                 </ChooseChallengeTypeContainer>

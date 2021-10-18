@@ -1,19 +1,16 @@
-//Faz as operacoes com o banco para challenges (exercicios) e rotinas
+//Faz as operacoes com o banco para challenges (exercicios) e ciclos
 
 import Cookies from "js-cookie";
-import Toast from "../Toast";
-
 
 
 const API_URL = process.env.NEXT_PUBLIC_API;
-const access_token = Cookies.get('access_token');
-
+// Da pra melhorar essa function antes de usar, torna-la mais generica.
 const request_options = (...body) => {
     return  {
         method: 'POST',
         headers:{
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + access_token
+            'Authorization': 'Bearer ' + Cookies.get('access_token')
         },
         body: JSON.stringify({...body})
     }
@@ -29,65 +26,48 @@ const handleRes = async (res: Response, error_message: string) => {
         }
 }
 
-const iniciarRotina = async id_user => {
-    return await fetch(`${API_URL}/api/iniciarRotina/`,{
-        method: 'POST',
-        headers:{
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + access_token
-        },
-        body: JSON.stringify({id_user})
-    })
-    .then( async res =>{
-        return await handleRes(res,'Não foi possível iniciar a rotina. Por favor, tente novamente mais tarde.');
-    })
-
-}
-
 const getChallenge = async type => {
-    return await fetch(`${API_URL}/api/getExercicio`,{
-        method: 'POST',
+    return await fetch(`${API_URL}/exercicio/${type}`,{
+        method: 'GET',
         headers:{
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + access_token
+            'Authorization': 'Bearer ' + Cookies.get('access_token')
         },
-        body: JSON.stringify({type})
     })
     .then( async res =>{
         return await handleRes(res,'Não foi possível carregar um desafio. Por favor, tente novamente mais tarde.');
     })
 }
 
-const confirmaChallenge = async (id_rotina, id_user, exp) =>{
-    return await fetch(`${API_URL}/api/confirmarExercicio/`,{
+const confirmaChallenge = async (usuario_id, exercicio_id, intervalo) =>{
+    return await fetch(`${API_URL}/exercicio/realizar-exercicio`,{
         method: 'POST',
         headers:{
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + access_token
+            'Authorization': 'Bearer ' + Cookies.get('access_token')
         },
-        body: JSON.stringify({id_rotina, id_user, exp})
+        body: JSON.stringify({usuario_id, exercicio_id, intervalo})
     })
     .then( async res =>{
-        return await handleRes(res,'Não foi possível confirmar a rotina. Por favor, tente novamente mais tarde.')
+        return await handleRes(res,'Não foi possível confirmar o ciclo. Por favor, tente novamente mais tarde.')
     })
 }
 
-const cancelarChallenge_Rotina = async (id_rotina) =>{
+const cancelarChallenge_Rotina = async (id_ciclo) =>{
     return await fetch(`${API_URL}/api/cancelarRotina`,{
         method: 'POST',
         headers:{
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + access_token
+            'Authorization': 'Bearer ' + Cookies.get('access_token')
         },
-        body: JSON.stringify({id_rotina})
+        body: JSON.stringify({id_ciclo})
     })
     .then( async res =>{
-        return await handleRes(res,'Não foi possível cancelar a rotina. Por favor, tente novamente mais tarde.')
+        return await handleRes(res,'Não foi possível cancelar o ciclo. Por favor, tente novamente mais tarde.')
     })
 }
 
 export default {
-    iniciarRotina,
     getChallenge,
     confirmaChallenge,
     cancelarChallenge_Rotina
