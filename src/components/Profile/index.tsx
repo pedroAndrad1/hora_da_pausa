@@ -6,15 +6,14 @@ import { ProfileContainer, ProfilePhoto, ProfileInfos, Name, Level, Skeleton }
 export default function Profile() {
     const { level, name, foto } = useContext(UserContext)
     //'https://hajiri.co/uploads/no_image.jpg'
-    //https://e31b1f67c47a.ngrok.io/imagens/usersIMG/7/0151272021041560779c1f36733.png
     const [skeleton, setSkeleton] = useState(true);
     const handleLoad = ({ target }) => {
         target.style.opacity = 1;
         setSkeleton(false);
     }
     
-   let url ='https://hajiri.co/uploads/no_image.jpg';
-    if(foto != null){
+   let url ='';
+    if(foto){
         url =  foto ;
     }
     else{

@@ -27,9 +27,8 @@ export default function EditarPerfil() {
         e.preventDefault();
         setLoading(true);
         const formData = new FormData();
-        formData.append('id_user', String(userId));
         formData.append('nome', nome);
-        formData.append('imagem', img);
+        formData.append('foto', img);
 
 
         UserService.update(formData)
@@ -40,8 +39,8 @@ export default function EditarPerfil() {
             })
             .then(() =>{
                 refreshUser();
-                //Esse timeout esta aqui pq nao estou conseguindo sincronizar a mudanca da page
-                //com a mudanca dos atributos do user
+                // Esse timeout esta aqui pq nao estou conseguindo sincronizar a mudanca da page
+                // com a mudanca dos atributos do user
                 setTimeout( ()=> {
                     router.push('/');
                     setLoading(false)
@@ -66,7 +65,7 @@ export default function EditarPerfil() {
                             <Spinner />
                             :
                             <Form onSubmit={handleSubmit}>
-                                <label>Foto de perfi:</label>
+                                <label>Foto de perfil:</label>
                                 <Input type='file' onChange={e => setImg(e.target.files[0])} />
 
                                 <label>Nome:</label>

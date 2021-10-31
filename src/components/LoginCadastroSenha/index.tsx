@@ -73,6 +73,7 @@ export default function LoginCadastroSenha({ type, token_reset_senha }: LoginCad
             .then(async res => {
                 const json = await res.json();
                 console.log(json);
+                console.log(res.ok);
                 if (res.ok) {
                     Cookie.remove('access_token');
                     Cookie.set('access_token', json.token, { expires: new Date('9999-01-01') });
@@ -86,9 +87,12 @@ export default function LoginCadastroSenha({ type, token_reset_senha }: LoginCad
                         json.usuario.xp,
                         json.usuario.xp_para_subir_de_nivel,
                         json.usuario.doador
-                    )
+                        )
+                        router.push("/");
+                    }
+                else{
+                    handleRes(res, json.message);
                 }
-                handleRes(res, json.message, null, '/');
             })
             .catch(err => handleError(err))
             .finally(() => setLoading(false));

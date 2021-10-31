@@ -102,22 +102,18 @@ const userLevelUp = async (id_user) => {
     })
 }
 
-const refreshUser = async () =>{
-    return await fetch(`${API_URL}/usuario/by/token`,{
+const refreshUser =  () =>{
+    return  fetch(`${API_URL}/usuario/by/token`,{
         method: 'GET',
         headers:{
             'Content-Type': 'application/json',
             'Authorization': 'Bearer ' + Cookies.get('access_token')
         }
     })
-    .then( async res =>{
-        console.log(res)
-        return await handleRes(res,'Não foi possível atualizar as informações do usuário. Por favor, tente realizar login')
-    })
 }
 
 const update = async (formData:FormData) =>{
-    return await fetch(`${API_URL}/api/editPerfil`,{
+    return await fetch(`${API_URL}/usuario/update`,{
         method: 'POST',
         headers:{
             'Authorization': 'Bearer ' + Cookies.get('access_token')

@@ -1,4 +1,5 @@
 import Cookies from "js-cookie";
+import { useRouter } from "next/router";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import { User } from "../models/User.model";
 import UserService from "../utils/services/UserService";
@@ -44,10 +45,13 @@ interface UserContextData {
 export const UserContext = createContext({} as UserContextData);
 
 export const UserContextProvider = ({ children }: UserContextProps) => {
+
+    const router = useRouter();
+
     //Se tiver um token, tenta realizar o autologin ao iniciar a pagina
-    useEffect(() =>{
+    useEffect( () =>{
         if(Cookies.get('access_token')){
-            refreshUser();
+            autoLogin();
         }
     }, []);
 
@@ -64,6 +68,34 @@ export const UserContextProvider = ({ children }: UserContextProps) => {
     const [logado, setLogado] = useState(false);
     //const [isLevelUpModalActive, setIsLevelUpModalActive] = useState(false);
 
+    const autoLogin = async () =>{
+        UserService.refreshUser()
+        .then(async res => {
+            console.log(res);
+            const response = await res.json();
+            console.log(response);
+
+            if(res.ok) {
+                setUserInfos(
+                    response.id,
+                    response.nome,
+                    response.email,
+                    response.foto,
+                    response.nivel,
+                    response.quant_exercicios_feitos,
+                    response.xp,
+                    response.xp_para_subir_de_nivel,
+                    response.doador
+                )
+                setLogado(true);
+            }
+            else{
+                router.push("/login");
+            }
+        })
+        .catch(err => Toast.error(err));
+    }
+
     const setUserInfos =
         (id: number,
         name: string,
@@ -78,23 +110,22 @@ export const UserContextProvider = ({ children }: UserContextProps) => {
             setUserId(id);
             setName(name);
             setEmail(email);
-            setUserFoto(foto);
             setLevel(level);
             setXp(xp);
             setXpParaUpar(xpParaUpar);
             setContribuidor(contribuidor);
             setRotinasFeitas(rotinasFeitas)
+            setUserFoto(foto);
         }
 
     const setUserNome = (name: string) => {
         setName(name);
     }
-    const setUserFoto = (foto: any) => {
-        if(foto !== null){
+    const setUserFoto = (foto: any) => {     
+        if(foto){
             //E necessario converter o Buffer que vem da API 
             const {data} = foto;
-            const img =  btoa(String.fromCharCode.apply(null, data));
-            console.log(img);
+            const img =  Buffer.from(data).toString("base64");
             setFoto("data:image/png;base64," + img);
         }
     }
@@ -121,20 +152,21 @@ export const UserContextProvider = ({ children }: UserContextProps) => {
                                 */
     }
 
-    const refreshUser = () => {
-        UserService.refreshUser()
-            .then(res => {
+    const refreshUser = async () => {
+       await UserService.refreshUser()
+            .then(async res => {
                 console.log(res)
+                const json = await res.json();
                 setUserInfos(
-                    res.id,
-                    res.nome,
-                    res.email,
-                    res.foto,
-                    res.nivel,
-                    res.quant_exercicios_feitos,
-                    res.xp,
-                    res.xp_para_subir_de_nivel,
-                    res.doador
+                    json.id,
+                    json.nome,
+                    json.email,
+                    json.foto,
+                    json.nivel,
+                    json.quant_exercicios_feitos,
+                    json.xp,
+                    json.xp_para_subir_de_nivel,
+                    json.doador
                 )
                 setLogado(true);
             })

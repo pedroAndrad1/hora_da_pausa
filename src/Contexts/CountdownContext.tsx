@@ -55,7 +55,6 @@ export function CountdownContextProvider({ children }: CountdownProviderProps) {
 
         if (isActive && time > 0) {
             countdownTimeout = setTimeout(() => setTime(time - 1), 1000);
-            console.log(initialTime);
         }
         else if (isActive && time == 0) {
             setHasFinished(true);

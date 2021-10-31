@@ -16,6 +16,7 @@ export function useFetch() {
     const handleRes = (res: Response, errorMessage: string, successMessage?: string, redirectUrl?: string,
         cookie?: Cookie) => {
         if (res.ok) {
+            console.log("ok")
             if (successMessage) Toast.success(successMessage);
             if (redirectUrl) router.push(redirectUrl);
             if (cookie) Cookie.set(cookie.key, cookie.value);
