@@ -31,7 +31,7 @@ export default function Doacao() {
         const cpfCond = validarCPF.test(CPF);
         const valCond = validarValor.test(valor)
 
-        if (!cpfCond) Toast.error('CPF inválido, apenas aceito formato 999.999.999-99!');
+        if (!cpfCond) Toast.error('CPF inválido');
         if (!valCond) Toast.error('Apenas é aceito valores positivos !');
 
 
@@ -41,11 +41,12 @@ export default function Doacao() {
                 .then(
                     async res => {
                         console.log(res);
-                        await UserService.getSolicitacaoPagamento(res.referenceId)
-                            .then(res => {
-                                console.log(res);
-                                router.push(res.paymentUrl);
-                            });
+                        router.push(res.paymentUrl);
+                        // await UserService.getSolicitacaoPagamento(res.referenceId)
+                        //     .then(res => {
+                        //         console.log(res);
+                        //         router.push(res.paymentUrl);
+                        //     });
                     }
                 )
                 .finally(() => setLoading(false));

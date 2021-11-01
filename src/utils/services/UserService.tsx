@@ -135,14 +135,14 @@ const GetPhoto = async urlImage =>{
     })
 }
 
-const doacao = async (id_user, name, value, cpf) => {
-    return await fetch(`${API_URL}/api/paymentRequest`,{
+const doacao = async (id_user, nome, valor, cpf) => {
+    return await fetch(`${API_URL}/doacao`,{
         method: 'POST',
         headers:{
             'Content-Type': 'application/json',
             'Authorization': 'Bearer ' + Cookies.get('access_token')
         },
-        body: JSON.stringify({id_user, name, value, cpf})
+        body: JSON.stringify({id_user, nome, valor, cpf})
     })
     .then( async res =>{
         console.log(res)
