@@ -1,3 +1,4 @@
+import Cookies from "js-cookie";
 import React, { useContext, useState } from "react";
 import { UserContext } from "../../Contexts/UserContext";
 import { Nav, Logo, Menu, Item, StyledLink, NavIcon, Line, Overlay, OverlayMenu }
@@ -6,7 +7,10 @@ import Divider from '../Divider';
 
 const Navbar = () => {
   const [toggle, setToogle] = useState(false);
-  const { name } = useContext(UserContext);
+
+  const logOff = () =>{
+    Cookies.remove("access_token");
+  }
 
   return (
     <>
@@ -22,19 +26,24 @@ const Navbar = () => {
               Perfil
             </StyledLink>
           </Item>
-          { /*<Item>
+          {/* <Item>
             <StyledLink href='/estatisticas'>
               Estatísticas
             </StyledLink>
-          </Item>
+          </Item> */}
           <Item>
             <StyledLink href='/ranking'>
               Ranking
             </StyledLink>
-          </Item> */}
+          </Item>
           <Item>
             <StyledLink href='/doacao'>
               Doe com picpay
+            </StyledLink>
+          </Item>
+          <Item onClick={logOff}>
+            <StyledLink href='/login' >
+              Logoff
             </StyledLink>
           </Item>
         </Menu>

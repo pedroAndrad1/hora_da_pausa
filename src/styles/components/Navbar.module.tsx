@@ -22,6 +22,8 @@ export const Logo = styled.h1`
 export const Menu = styled.ul`
   list-style: none;
   display: flex;
+  justify-content: space-evenly;
+  width: 30%;
 
   li:nth-child(2) {
     margin: 0px 20px;
