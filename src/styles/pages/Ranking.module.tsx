@@ -97,25 +97,3 @@ export const NavTableContainer = styled.div`
         gap: 3rem;
     }
 `
-export const ArrowsContainer = styled.div`
-
-    display: flex;
-    justify-content: space-evenly;
-    align-items: center;
-    width: 100%;
-`
-
-const Arrow = styled.i`
-     border: solid var(--blue-dark);
-     border-width: 0 8px 8px 0;
-     display: inline-block;
-     padding: .75rem;
-     cursor:pointer;
-`;
-
-export const LeftArrow = styled(Arrow)`
-      transform: rotate(135deg);
-`
-export const RightArrow = styled(Arrow)`
-     transform: rotate(-45deg);
-`

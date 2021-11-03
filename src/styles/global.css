@@ -64,3 +64,14 @@ a{
    transform: translateX(-50px);
    animation: animeLeft .5s forwards;
 }
+
+.pagination{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  
+  
+    width: 50%;
+    /* position: absolute;
+    bottom: 10px; */
+  }
