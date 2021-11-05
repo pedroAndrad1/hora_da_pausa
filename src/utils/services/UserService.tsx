@@ -164,7 +164,17 @@ const getSolicitacaoPagamento = async (referenceId:string) => {
         return await handleRes(res, null)
     })
 }
-//const doacao1 = async (id_user: string, name: string, value, )
+
+const rankingGeral = async token =>{
+    return await fetch(`${API_URL}/usuario/ranking/rankingGeral`,{
+        method: 'GET',
+        headers:{
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+        }
+    })
+}
+
 
 export default{ 
     create,
@@ -177,5 +187,6 @@ export default{
     GetPhoto,
     loginFacebook,
     doacao,
-    getSolicitacaoPagamento
+    getSolicitacaoPagamento,
+    rankingGeral,
 }

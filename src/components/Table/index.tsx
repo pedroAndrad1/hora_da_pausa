@@ -2,25 +2,20 @@ import styled from "styled-components";
 
 export const Table = styled.table`
     width: 100%;
-    margin: 2rem 0;
-    color: black;
+    height: 100%;
+    background: var(--white);
+    box-shadow: .25rem .25rem .25rem rgba(0,0,0,0.2);
+    margin-bottom: 2rem;
 
     th, td{
-        padding: .75rem 1rem;
-        border-bottom: 1px solid black;
+        padding: 1rem;
     }
 
-    th{
-        text-transform: uppercase;
-        font-size: .75rem;
-        text-align: left;
+    tr{
+        text-align: center;
+        box-shadow: 0 0 .25rem rgba(0,0,0,0.2);
+        border-radius: 10px;
+        margin-top:.25rem;
     }
 
-    tbody{   
-        color: black;
-    }
-
-    i{
-        cursor: pointer;
-    }
 `

@@ -23,7 +23,7 @@
     "**/*.ts",
     "**/*.tsx",
     "src/utils/Toast/index.js"  
-  ],
+, "src/utils/customHooks/useBufferToImage.js"  ],
   "exclude": [
     "node_modules"
   ]

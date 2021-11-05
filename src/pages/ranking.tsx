@@ -1,65 +1,44 @@
-import { motion } from "framer-motion";
 import { GetServerSideProps } from "next";
 import Head from "next/head";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Container } from "../components/Container";
 import Navbar from "../components/Navbar";
 import {
-    Main
+    Main, Photo
 } from "../styles/pages/Ranking.module";
 import LeftArrow from "../components/Arrows/LeftArrow";
 import RightArrow from "../components/Arrows/RightArrow";
 import { useTable, useGlobalFilter, usePagination } from 'react-table';
 import { Table } from "../components/Table";
 import Filtro from "../components/Filtro"
+import UserService from "../utils/services/UserService";
+import useBufferToImage from '../utils/customHooks/useBufferToImage';
 
-
-export default function Ranking() {
-    const data = useMemo(() => [
-        {
-            matricula: 'XXXXXXXXXXX', nome: 'Nome do aluno',
-            situacao: 'CR menor que sete e mais de 3 reprovação em x',
-            detalhes: 'link'
-        },
-        {
-            matricula: 'XXXXXXXXXXX', nome: 'Roberto Silva de Sousa',
-            situacao: 'CR menor que sete e mais de 3 reprovação em x',
-            detalhes: 'link'
-        },
-        {
-            matricula: 'XXXXXXXXXXX', nome: 'Jéssica Carvalho dos Santos',
-            situacao: 'CR menor que sete e mais de 3 reprovação em x',
-            detalhes: 'link'
-        },
-        {
-            matricula: 'XXXXXXXXXXX', nome: 'Nome do aluno',
-            situacao: 'CR menor que sete e mais de 3 reprovação em x',
-            detalhes: 'link'
-        },
-        {
-            matricula: 'XXXXXXXXXXX', nome: 'Nome do aluno',
-            situacao: 'CR menor que sete e mais de 3 reprovação em x',
-            detalhes: 'link'
-        },
-    ], [])
+export default function Ranking({ usuarios_rankeados }) {
+  
+    const data = useMemo(() => usuarios_rankeados, []);
 
     const columns = useMemo(
         () => [
             {
-                Header: 'Mátricula',
-                accessor: 'matricula' //chave da info para a coluna
+                Header: 'Posição',
+                accessor: 'posicao' //chave da info para a coluna
+            },
+            {
+                Header: 'Foto',
+                accessor: 'foto' //chave da info para a coluna
             },
             {
                 Header: 'Nome',
                 accessor: 'nome' //chave da info para a coluna
             },
             {
-                Header: 'Situação',
-                accessor: 'situacao' //chave da info para a coluna
+                Header: 'Nível',
+                accessor: 'nivel' //chave da info para a coluna
             },
             {
-                Header: 'Detalhes',
-                accessor: 'detalhes' //chave da info para a coluna
+                Header: 'Xp',
+                accessor: 'xp' //chave da info para a coluna
             },
         ]
         , []);
@@ -141,14 +120,14 @@ export default function Ranking() {
                                             {
                                                 //fazendo um looping nas row cells
                                                 row.cells.map((cell, i) => {
-                                                    if (cell.column.id === 'detalhes') {
+                                                    if (cell.column.id === 'foto') {
                                                         return (
                                                             <td
                                                                 key={`${i}_body_cell`}
                                                                 {...cell.getCellProps()}
                                                             >
                                                                 {/* Renderizando a cell */}
-                                                                <i className="bi bi-search"></i>
+                                                                <Photo src={cell.value} alt='Foto de perfil' />
                                                             </td>
                                                         )
                                                     }
@@ -202,8 +181,33 @@ export default function Ranking() {
 //crawlers indexadores poderam ver o conteudo requisitado.
 export const getServerSideProps: GetServerSideProps = async (context) => {
 
-    const { authorized } = context.req.cookies;
+    const { access_token } = context.req.cookies;
+    const usuarios_server =
+        await UserService.rankingGeral(access_token)
+            .then(async res => {
+                if (res.ok) {
+                    return await res.json();
+                }
+            })
+    // Mapeando os Usuarios para a tabela de ranking
+    const usuarios_rankeados = usuarios_server.map((usuario, pos) => {
+        // Verificando se o usuario tem foto para evitar erro
+        let foto;
+        if (usuario.foto) {
+            foto = useBufferToImage(usuario.foto)
+        }
+        else {
+            foto = 'https://hajiri.co/uploads/no_image.jpg';
+        }
 
+        return {
+            posicao: pos + 1,
+            foto,
+            nome: usuario.nome,
+            nivel: usuario.nivel,
+            xp: usuario.xp,
+        }
+    });
     //Verifica se o user tem o cookie que indica que ele esta logado, se nao, e mandando para tela de login
     /*if(!authorized){
       return{
@@ -216,6 +220,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 
     return {
-        props: {}
+        props: {
+            usuarios_rankeados
+        }
     }
 }

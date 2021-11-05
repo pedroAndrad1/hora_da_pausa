@@ -71,10 +71,7 @@ export const UserContextProvider = ({ children }: UserContextProps) => {
     const autoLogin = async () =>{
         UserService.refreshUser()
         .then(async res => {
-            console.log(res);
             const response = await res.json();
-            console.log(response);
-
             if(res.ok) {
                 setUserInfos(
                     response.id,
